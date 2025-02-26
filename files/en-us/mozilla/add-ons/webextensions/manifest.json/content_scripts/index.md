@@ -1,12 +1,10 @@
 ---
 title: content_scripts
 slug: Mozilla/Add-ons/WebExtensions/manifest.json/content_scripts
-tags:
-  - Add-ons
-  - Extensions
-  - WebExtensions
+page-type: webextension-manifest-key
 browser-compat: webextensions.manifest.content_scripts
 ---
+
 {{AddonSidebar}}
 
 <table class="fullwidth-table standard-table">
@@ -18,6 +16,10 @@ browser-compat: webextensions.manifest.content_scripts
     <tr>
       <th scope="row">Mandatory</th>
       <td>No</td>
+    </tr>
+    <tr>
+      <th scope="row">Manifest version</th>
+      <td>2 or higher</td>
     </tr>
     <tr>
       <th scope="row">Example</th>
@@ -39,8 +41,8 @@ Instructs the browser to load [content scripts](/en-US/docs/Mozilla/Add-ons/WebE
 
 This key is an array. Each item is an object which:
 
-- **must** contain a key named **`matches`**, which specifies the URL patterns to be matched in order for the scripts to be loaded;
-- **may** contain keys named **`js`** and **`css`**, which list scripts and/or stylesheets to be loaded into matching pages; and
+- **must** contain a key named **`matches`**, which specifies the URL patterns to be matched in order for the scripts to be loaded;
+- **may** contain keys named **`js`** and **`css`**, which list scripts and/or stylesheets to be loaded into matching pages; and
 - **may** contain a number of other properties that control finer aspects of how and when content scripts are loaded.
 
 Details of all the keys you can include are given in the table below.
@@ -159,12 +161,12 @@ Details of all the keys you can include are given in the table below.
         <p>
           Files are injected in the order given. This means that, for example,
           if you include jQuery here followed by another content script, like
-          this...
+          this:
         </p>
         <pre class="brush: json">
 "js": ["jquery.js", "my-content-script.js"]</pre
         >
-        <p>...then <code>"my-content-script.js"</code> can use jQuery.</p>
+        <p>Then, <code>"my-content-script.js"</code> can use jQuery.</p>
         <p>
           The files are injected after any files in
           <code><a href="#css">css</a></code
@@ -188,7 +190,7 @@ Details of all the keys you can include are given in the table below.
           the rest of the <code>content_scripts</code> key.
         </p>
         <p>
-          This is especially useful to run scripts in empty iframes , whose URL
+          This is especially useful to run scripts in empty iframes, whose URL
           is <code>"about:blank"</code>. To do this you should also set the
           <code>all_frames</code> key.
         </p>
@@ -214,14 +216,23 @@ Details of all the keys you can include are given in the table below.
         <div class="notecard note">
           <p>
             <strong>Note:</strong> <code>match_about_blank</code> is supported
-            in Firefox from version 52. 
+            in Firefox from version 52.
           </p>
           <p>
             Note that in Firefox, content scripts won't be injected into empty
-            iframes at <code>"document_start"</code>, even if you specify that
-            value in <code><a href="#run_at">run_at</a></code> .
+            iframes at <code>"document_start"</code>, even if you specify that
+            value in <code><a href="#run_at">run_at</a></code>.
           </p>
         </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code><a id="match_origin_as_fallback">match_origin_as_fallback</a></code>
+      </td>
+      <td><code>Boolean</code></td>
+      <td>
+        When <code>true</code>, code is injected into <code>about:</code>, <code>data:</code>, and <code>blob:</code> pages when their origin matches the pattern in <code>matches</code>, even if the document origin is opaque (due to the use of CSP or iframe sandbox). Match patterns in <code>matches</code> must specify a wildcard path glob. Defaults to <code>false</code>.
       </td>
     </tr>
     <tr>
@@ -279,6 +290,37 @@ Details of all the keys you can include are given in the table below.
         </p>
       </td>
     </tr>
+    <tr>
+      <td>
+        <a id="world"><code>world</code></a>
+      </td>
+      <td><code>String</code></td>
+      <td>
+        <p>
+          The JavaScript world the script executes in.
+        </p>
+        <dl>
+          <dt><code>"ISOLATED"</code></dt>
+          <dd>
+            The default <a href="/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts">content scripts</a> execution environment.
+            This environment is isolated from the page's context: while they share the same document, the global scopes and available APIs differ.
+          </dd>
+          <dt><code>"MAIN"</code></dt>
+          <dd>
+            The web page's execution environment.
+            This environment is shared with the web page without isolation.
+            Scripts in this environment don't have any access to the APIs that are only available to content scripts.
+            <div class="notecard warning" id="sect1">
+              <p>
+                <strong>Warning:</strong> Due to the lack of isolation, the web page can detect and interfere with the executed code.
+                Do not use the <code>MAIN</code> world unless it is acceptable for web pages to read, access, or modify the logic or data that flows through the executed code.
+              </p>
+            </div>
+          </dd>
+        </dl>
+        <p>The default value is <code>"ISOLATED"</code>.</p>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -301,7 +343,7 @@ To match one of these properties, a URL must match at least one of the items in 
 "matches": ["*://*.example.org/*", "*://*.example.com/*"]
 ```
 
-Both `http://example.org/` and `http://example.com/` will match.
+Both `http://example.org/` and `http://example.com/` will match.
 
 Since `matches` is the only mandatory key, the other three keys are used to limit further the URLs that match. To match the key as a whole, a URL must:
 
@@ -316,8 +358,8 @@ A _glob_ is just a string that may contain wildcards.
 
 There are two types of wildcard, and you can combine them in the same glob:
 
-1.  `*` matches zero or more characters
-2.  `?` matches exactly one character.
+1. `*` matches zero or more characters
+2. `?` matches exactly one character.
 
 For example: `"*na?i"` would match `"illuminati"` and `"annunaki"`, but not `"sagnarelli"`.
 
@@ -332,7 +374,7 @@ For example: `"*na?i"` would match `"illuminati"` and `"annunaki"`, but not `"sa
 ]
 ```
 
-This injects a single content script `borderify.js` into all pages under `mozilla.org` or any of its subdomains, whether served over HTTP or HTTPS.
+This injects a single content script `borderify.js` into all pages under `mozilla.org` or any of its subdomains, whether served over HTTP or HTTPS.
 
 ```json
   "content_scripts": [
@@ -344,9 +386,9 @@ This injects a single content script `borderify.js` into all pages under `mozil
   ]
 ```
 
-This injects two content scripts into all pages under `mozilla.org` or any of its subdomains except `developer.mozilla.org`, whether served over HTTP or HTTPS.
+This injects two content scripts into all pages under `mozilla.org` or any of its subdomains except `developer.mozilla.org`, whether served over HTTP or HTTPS.
 
-The content scripts see the same view of the DOM and are injected in the order they appear in the array, so `borderify.js` can see global variables added by `jquery.js`.
+The content scripts see the same view of the DOM and are injected in the order they appear in the array, so `borderify.js` can see global variables added by `jquery.js`.
 
 ## Browser compatibility
 

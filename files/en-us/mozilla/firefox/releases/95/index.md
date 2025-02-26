@@ -1,69 +1,51 @@
 ---
 title: Firefox 95 for developers
 slug: Mozilla/Firefox/Releases/95
-tags:
-  - '95'
-  - Firefox
-  - Mozilla
-  - Release
+page-type: firefox-release-notes
 ---
-{{FirefoxSidebar}}{{draft}}
+
+{{FirefoxSidebar}}
 
 This article provides information about the changes in Firefox 95 that will affect developers.
-Firefox 95 is the current [Beta version of Firefox](https://www.mozilla.org/en-US/firefox/channel/desktop/#beta), and will ship on [December 7, 2021](https://wiki.mozilla.org/RapidRelease/Calendar#Future_branch_dates).
+Firefox 95 was released on December 7, 2021.
 
 ## Changes for web developers
 
-### Developer Tools
-
 ### HTML
 
-#### Removals
+- The [`inputmode`](/en-US/docs/Web/HTML/Global_attributes/inputmode) global attribute is now supported on all platforms, instead of just Android.
+  This provides a hint to browsers about the type of virtual keyboard that would be best suited to editing a particular element ([Firefox bug 1205133](https://bugzil.la/1205133)).
 
 ### CSS
 
-#### Removals
+- The CSS [`cursor`](/en-US/docs/Web/CSS/cursor) property is now supported on Firefox for Android,
+  making it easier for Android users with a mouse to determine which elements are clickable ([Firefox bug 1672609](https://bugzil.la/1672609)).
 
 ### JavaScript
 
-#### Removals
-
-### HTTP
-
-#### Removals
-
-### Security
-
-#### Removals
+No notable changes
 
 ### APIs
 
-- The {{domxref("Crypto.randomUUID()")}} function is now supported. This returns a cryptographically strong 36 character fixed-length UUID ({{bug(1723674)}}).
-
-#### DOM
-
-- Support for additional {{domxref("ElementInternals")}} properties and methods that allow a custom element to interact with a form.
-  These include {{domxref("ElementInternals.form","form")}} to get the form associated with the element, {{domxref("ElementInternals.labels","labels")}} to get the list of labels ({{bug(1556373)}}), and the {{domxref("ElementInternals.setFormValue()","setFormValue()")}} method to set the sanitized value and user-entered data, if needed.
-  The related bugs are: {{bug(1556362)}}, {{bug(1556373)}}, {{bug(1556449)}}.
+- The {{domxref("Crypto.randomUUID()")}} function is now supported. This returns a cryptographically strong 36 character fixed-length UUID ([Firefox bug 1723674](https://bugzil.la/1723674)).
 
 #### Media, WebRTC, and Web Audio
 
-#### Removals
-
-### WebAssembly
-
-#### Removals
+- {{domxref("SpeechSynthesisEvent.elapsedTime")}} now returns the elapsed time in seconds rather than milliseconds, matching an update to the specification (see [Firefox bug 1732498](https://bugzil.la/1732498)).
 
 ### WebDriver conformance (Marionette)
 
-#### Removals
+- The `port` used by Marionette is now written to the `MarionetteActivePort` file in the profile directory. This can be used to easily retrieve the `port`, which before was only possible by parsing the `prefs.js` file of the profile. ([Firefox bug 1735162](https://bugzil.la/1735162)).
+- `WebDriver:NewSession` now waits for the initial tab to have completed loading to prevent unexpected unloads of the window proxy. ([Firefox bug 1736323](https://bugzil.la/1736323)).
 
 ## Changes for add-on developers
 
-#### Removals
+- Added `overrideContentColorScheme` in {{WebExtAPIRef("browserSettings")}} to provide the ability to control the preference `layout.css.prefers-color-scheme.content-override` and set pages' preferred color scheme (light or dark) independently of the browser theme ([Firefox bug 1733461](https://bugzil.la/1733461)).
 
-### Other
+- Added `globalPrivacyControl` in {{WebExtAPIRef("privacy.network")}} to provide visibility into whether the user has enabled Global Privacy Control inside the browser. ([Firefox bug 1670058](https://bugzil.la/1670058)).
+
+- Added the `"webRequestFilterResponse.serviceWorkerScript"` [API permission](/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#api_permissions). This permission provides access to {{WebExtAPIRef("webRequest.filterResponseData")}} for requests originated for service worker scripts. This permission can be provided as an optional permission. See {{WebExtAPIRef("webRequest.filterResponseData")}} for more information on using these permissions ([Firefox bug 1636629](https://bugzil.la/1636629)).
 
 ## Older versions
 
-{{Firefox_for_developers(94)}}
+{{Firefox_for_developers}}
